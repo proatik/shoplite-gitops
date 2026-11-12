@@ -1,0 +1,3 @@
+# k3s kubelets serve self-signed certificates.
+args:
+  - --kubelet-insecure-tls

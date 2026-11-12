@@ -1,0 +1,24 @@
+# traefik behind the alb: prod on the web entrypoint, dev on its own, each a fixed NodePort the alb targets.
+service:
+  spec:
+    type: NodePort
+ports:
+  web:
+    nodePort: 30080
+  websecure:
+    expose:
+      default: false
+  dev:
+    port: 8081
+    exposedPort: 8081
+    nodePort: 30081
+    protocol: TCP
+    expose:
+      default: true
+ingressClass:
+  isDefaultClass: true
+# the alb health check calls /ping on the prod NodePort, so ping answers on the web entrypoint.
+additionalArguments:
+  - --ping.entrypoint=web
+deployment:
+  healthchecksPort: 8000
