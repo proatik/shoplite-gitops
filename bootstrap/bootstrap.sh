@@ -5,12 +5,14 @@
 #   KUBECONFIG          the k3s cluster (ansible fetches ~/.kube/shoplite.yaml)
 #   KEYS_DIR            folder with argocd-shoplite-app and argocd-shoplite-gitops, the read-only deploy keys
 #   SLACK_WEBHOOK_FILE  file holding the Slack incoming-webhook url for alerts
+#   ALB_HOSTNAME        the ALB's dns name, which Traefik reports as every Ingress's address
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
 : "${KUBECONFIG:?point KUBECONFIG at the k3s cluster}"
 : "${KEYS_DIR:?set KEYS_DIR to the folder holding the read-only deploy keys}"
 : "${SLACK_WEBHOOK_FILE:?set SLACK_WEBHOOK_FILE to the file holding the Slack webhook url}"
+: "${ALB_HOSTNAME:?set ALB_HOSTNAME to the ALB dns name, from terraform output url}"
 
 TRAEFIK_VERSION=42.3.1
 METRICS_SERVER_VERSION=3.14.0
@@ -21,7 +23,8 @@ helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server --
 helm repo add argo https://argoproj.github.io/argo-helm --force-update > /dev/null
 
 helm upgrade --install traefik traefik/traefik --version "$TRAEFIK_VERSION" \
-  --namespace traefik --create-namespace --values bootstrap/traefik.yaml --wait
+  --namespace traefik --create-namespace --values bootstrap/traefik.yaml \
+  --set providers.kubernetesIngress.ingressEndpoint.hostname="$ALB_HOSTNAME" --wait
 helm upgrade --install metrics-server metrics-server/metrics-server --version "$METRICS_SERVER_VERSION" \
   --namespace kube-system --values bootstrap/metrics-server.yaml --wait
 
