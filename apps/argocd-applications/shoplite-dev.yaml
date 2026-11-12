@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: shoplite-dev
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: '2'
+spec:
+  project: default
+  sources:
+    - repoURL: git@github.com:proatik/shoplite-app.git
+      targetRevision: main
+      path: helm/shoplite
+      helm:
+        valueFiles: [$values/envs/dev/values.yaml]
+    - repoURL: git@github.com:proatik/shoplite-gitops.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: shoplite-dev
+  # dev follows Git on its own and undoes manual changes; argo cd allows self-heal only with automated sync.
+  syncPolicy:
+    automated: { prune: true, selfHeal: true }

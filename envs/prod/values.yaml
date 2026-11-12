@@ -1,0 +1,26 @@
+# shoplite (prod): argo cd applies a change here only when someone syncs it.
+# promote a release by copying image from envs/dev/values.yaml once dev looks healthy.
+image:
+  registry: ''
+  tag: unreleased
+
+# prod answers on the alb's port 80, the brief's / and /api.
+ingress:
+  entryPoint: web
+
+monitoring:
+  enabled: true
+
+# the nightly pg_dump on the control plane backs up this environment.
+backup:
+  enabled: true
+
+# fault injection for the chaos exercise; every flag is off.
+catalogApi:
+  chaos:
+    latencyMs: 0
+    errorRate: 0
+orderWorker:
+  chaos:
+    memoryLeak: false
+    slowDb: false
