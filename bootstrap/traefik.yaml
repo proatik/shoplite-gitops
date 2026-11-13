@@ -15,6 +15,12 @@ ports:
     protocol: TCP
     expose:
       default: true
+# a NodePort service has no address to copy, so bootstrap.sh hands traefik the alb's dns name to
+# report on every ingress; without an address argo cd keeps an ingress Progressing.
+providers:
+  kubernetesIngress:
+    publishedService:
+      enabled: false
 ingressClass:
   isDefaultClass: true
 # the alb health check calls /ping on the prod NodePort, so ping answers on the web entrypoint.

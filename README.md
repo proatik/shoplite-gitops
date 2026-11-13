@@ -48,11 +48,12 @@ Run once per cluster, after Ansible has built it and fetched the kubeconfig:
 export KUBECONFIG=~/.kube/shoplite.yaml
 export KEYS_DIR=<folder with argocd-shoplite-app and argocd-shoplite-gitops>
 export SLACK_WEBHOOK_FILE=<file holding the Slack webhook url>
+export ALB_HOSTNAME=<the ALB dns name, from terraform output url>
 ./bootstrap/bootstrap.sh
 ```
 
-It installs Traefik (prod on NodePort 30080, dev on 30081), metrics-server for the worker's
-autoscaler and Argo CD, then applies `apps/root.yaml`. It also creates the secrets that never enter
+It installs Traefik (prod on NodePort 30080, dev on 30081, reporting the ALB as every Ingress's
+address so Argo CD can mark it Healthy), metrics-server for the worker's autoscaler and Argo CD, then applies `apps/root.yaml`. It also creates the secrets that never enter
 Git: a random database password per environment, the Grafana admin login and the Slack webhook.
 A secret that already exists is kept, so running it again is safe.
 
