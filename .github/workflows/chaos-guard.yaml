@@ -1,0 +1,30 @@
+# fails a pull request that turns on a chaos flag in prod, so a fault cannot hide behind an
+# innocuous commit message on its way to review. the chaos exercise pushes to main and skips it.
+name: Chaos guard
+
+on:
+  pull_request:
+    paths: ["envs/prod/values.yaml"]
+
+permissions:
+  contents: read
+
+jobs:
+  chaos-off:
+    name: Chaos flags off in prod
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: every chaos flag keeps its default
+        run: |
+          flags=$(grep -E '^    (latencyMs|errorRate|memoryLeak|slowDb):' envs/prod/values.yaml)
+          if [ "$(wc -l <<< "$flags")" -ne 4 ]; then
+            echo "::error file=envs/prod/values.yaml::expected the four chaos flags"
+            exit 1
+          fi
+          if on=$(grep -vE ': (0|false)$' <<< "$flags"); then
+            echo "::error file=envs/prod/values.yaml::chaos flags are on in prod: $on"
+            exit 1
+          fi
+          echo 'all four chaos flags are off in prod'

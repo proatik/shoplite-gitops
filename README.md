@@ -91,3 +91,7 @@ state in Git within seconds.
    investigates with Grafana alone, following the runbooks in
    `shoplite-app/monitoring/runbooks`.
 4. Recovery: `git revert` the peer's commit, push, and sync `shoplite-prod`.
+
+Outside the exercise, `.github/workflows/chaos-guard.yaml` fails any pull request that turns on a
+chaos flag in `envs/prod/values.yaml`: the preventive measure from the chaos-day RCA. The exercise
+pushes straight to `main`, so the guard does not stop it.
