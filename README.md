@@ -3,6 +3,7 @@
 The desired state of every ShopLite environment. Argo CD watches this repository and makes the
 cluster match it; nothing is deployed by hand or by CI. The app, its Helm chart and the monitoring
 configuration live in [shoplite-app](https://github.com/proatik/shoplite-app).
+The checkpoint screenshots are published at <https://shoplite-evidence.netlify.app/>.
 
 ## Layout
 
