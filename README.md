@@ -55,11 +55,12 @@ export ALB_HOSTNAME=<the ALB dns name, from terraform output url>
 ```
 
 It installs Traefik (prod on NodePort 30080, dev on 30081, reporting the ALB as every Ingress's
-address so Argo CD can mark it Healthy), metrics-server for the worker's autoscaler and Argo CD, then applies `apps/root.yaml`. It also creates the secrets that never enter
-Git: a random database password per environment, the Grafana admin login and the Slack webhook.
-A secret that already exists is kept, so running it again is safe.
+address so Argo CD can mark it Healthy), metrics-server for the worker's autoscaler and Argo CD,
+then applies `apps/root.yaml`. It also creates the secrets that never enter Git: a random database
+password per environment, the Grafana admin login and the Slack webhook. A secret that already
+exists is kept, so running it again is safe.
 
-Argo CD reads both private repositories with read-only deploy keys; CI writes the image tag here
+Argo CD reads both repositories with read-only deploy keys; CI writes the image tag here
 with its own write key.
 
 ## How a release reaches the browser
