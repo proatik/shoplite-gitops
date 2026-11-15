@@ -14,7 +14,8 @@ shoplite-gitops/
 ├── envs/
 │   ├── dev/values.yaml           Helm values for shoplite-dev
 │   └── prod/values.yaml          Helm values for shoplite (prod)
-└── bootstrap/                    what Argo CD cannot install for itself
+├── bootstrap/                    what Argo CD cannot install for itself
+└── scripts/chaos.sh              plants one hidden fault in prod when no peer is available
 ```
 
 ## Environments
@@ -79,7 +80,9 @@ state in Git within seconds.
 
 ## Chaos exercise
 
-1. A peer gets write access to this repository for one hour.
+1. A peer gets write access to this repository for one hour. Without a peer,
+   `scripts/chaos.sh` plays that part and does not say which flag it chose. Run it on a
+   machine that can push to this repository: the cluster's deploy keys are read-only.
 2. The peer turns on one flag under `catalogApi.chaos` or `orderWorker.chaos` in
    `envs/prod/values.yaml` and commits it with an innocuous message.
 3. The operator syncs `shoplite-prod` as a routine release without opening the diff, then
