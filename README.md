@@ -26,8 +26,8 @@ shoplite-gitops/
 | dev         | `shoplite-dev` | `http://<alb>:8080/`       | automatic, self-heal | written by CI on each release |
 | prod        | `shoplite`     | `http://<alb>/` and `/api` | manual               | promoted from dev by a commit |
 
-Argo CD offers self-heal only together with automatic sync, so dev reverts manual changes on its
-own; prod changes only when someone presses **Sync**, after reviewing the diff.
+Argo CD offers self-heal only with automatic sync, so dev reverts manual changes on its own; prod
+changes only when someone presses **Sync** after reviewing the diff.
 
 ## Platform
 
@@ -76,9 +76,8 @@ with its own write key.
 
 ## Self-healing
 
-Edit any resource of dev by hand, for example
-`kubectl -n shoplite-dev scale deploy/web --replicas=1`: Argo CD sees the drift and restores the
-state in Git within seconds.
+Edit dev by hand (for example `kubectl -n shoplite-dev scale deploy/web --replicas=1`) and Argo CD
+restores the state in Git within seconds.
 
 ## Chaos exercise
 
@@ -91,3 +90,7 @@ state in Git within seconds.
    investigates with Grafana alone, following the runbooks in
    `shoplite-app/monitoring/runbooks`.
 4. Recovery: `git revert` the peer's commit, push, and sync `shoplite-prod`.
+
+Outside the exercise, `.github/workflows/chaos-guard.yaml` fails any pull request that turns on a
+chaos flag in `envs/prod/values.yaml`: the preventive measure from the chaos-day RCA. The exercise
+pushes straight to `main`, so the guard does not stop it.
