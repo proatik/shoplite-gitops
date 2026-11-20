@@ -19,4 +19,12 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: shoplite
+  # the canary Rollout scales the catalog-api Deployment to zero; git keeps its replica count.
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      name: catalog-api
+      jsonPointers: [/spec/replicas]
   # prod changes only when someone syncs it in argo cd, after checking dev.
+  syncPolicy:
+    syncOptions: [RespectIgnoreDifferences=true]
