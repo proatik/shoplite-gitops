@@ -12,3 +12,8 @@ monitoring:
 catalogApi:
   canary:
     enabled: true
+# dev shows the bonus queue: orders go through amazon sqs, and a lambda emits OrderConfirmed.
+# prod keeps the redis list orders:pending that the brief requires.
+queue:
+  backend: sqs
+  awsRegion: ap-southeast-1
