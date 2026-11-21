@@ -29,6 +29,10 @@ shoplite-gitops/
 Argo CD offers self-heal only with automatic sync, so dev reverts manual changes on its own; prod
 changes only when someone presses **Sync** after reviewing the diff.
 
+Dev sends orders through Amazon SQS, and a Lambda emits an `OrderConfirmed` event for each completed
+order; dev therefore needs the queues from `enable_sqs=true` in shoplite-app's Terraform. Prod keeps
+the Redis list `orders:pending` that the brief requires.
+
 ## Platform
 
 | Application                     | Installs                                       | Sync wave |
