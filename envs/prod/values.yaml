@@ -2,7 +2,7 @@
 # promote a release by copying image from envs/dev/values.yaml once dev looks healthy.
 image:
   registry: '841162696561.dkr.ecr.ap-southeast-1.amazonaws.com'
-  tag: "2839391"
+  tag: "20eeec6"
 
 # prod answers on the alb's port 80, the brief's / and /api.
 ingress:
