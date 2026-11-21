@@ -12,8 +12,6 @@ monitoring:
 catalogApi:
   canary:
     enabled: true
-  chaos:
-    errorRate: 0.5
 # dev shows the bonus queue: orders go through amazon sqs, and a lambda emits OrderConfirmed.
 # prod keeps the redis list orders:pending that the brief requires.
 queue:
