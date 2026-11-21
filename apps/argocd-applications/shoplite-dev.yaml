@@ -20,5 +20,14 @@ spec:
     server: https://kubernetes.default.svc
     namespace: shoplite-dev
   # dev follows Git on its own and undoes manual changes; argo cd allows self-heal only with automated sync.
+  # the canary Rollout scales the catalog-api Deployment to zero; git keeps its replica count.
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      name: catalog-api
+      jsonPointers: [/spec/replicas]
   syncPolicy:
     automated: { prune: true, selfHeal: true }
+    syncOptions: [RespectIgnoreDifferences=true]
+    # the Rollout CRD may arrive after the first sync; retry instead of failing once.
+    retry: { limit: 5, backoff: { duration: 30s, factor: 2, maxDuration: 5m } }

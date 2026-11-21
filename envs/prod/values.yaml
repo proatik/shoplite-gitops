@@ -17,6 +17,9 @@ backup:
 
 # fault injection for the chaos exercise; every flag is off.
 catalogApi:
+  # releases go through an analysed canary (argo rollouts).
+  canary:
+    enabled: true
   chaos:
     latencyMs: 0
     errorRate: 0

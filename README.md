@@ -35,9 +35,15 @@ changes only when someone presses **Sync** after reviewing the diff.
 | ------------------------------- | ---------------------------------------------- | --------- |
 | `kube-prometheus-stack`         | Prometheus, Alertmanager, Grafana              | 0         |
 | `loki`, `tempo`, `alloy`        | logs, traces and log shipping                  | 0         |
+| `argo-rollouts`                 | the controller for catalog-api canary releases | 0         |
 | `dashboards`                    | the Golden Signals dashboard from shoplite-app | 1         |
-| `alert-rules`                   | the five alerts from shoplite-app              | 1         |
+| `alert-rules`                   | the alerts and the SLO from shoplite-app       | 1         |
 | `shoplite-dev`, `shoplite-prod` | the app chart with each environment's values   | 2         |
+
+Both environments release catalog-api as a canary: an Argo Rollouts `Rollout` references the
+catalog-api Deployment (`workloadRef`), runs each release on half the pods, and aborts it when the
+`POST /orders` 5xx rate passes 5%. The Applications ignore the Deployment's replica count, which the
+Rollout sets to zero.
 
 The monitoring Applications take their values from `shoplite-app/monitoring/values`, so the stack
 and the app change together.

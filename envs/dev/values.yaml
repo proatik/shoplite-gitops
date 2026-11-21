@@ -8,3 +8,7 @@ ingress:
   entryPoint: dev
 monitoring:
   enabled: true
+# catalog-api releases go through an analysed canary (argo rollouts).
+catalogApi:
+  canary:
+    enabled: true
