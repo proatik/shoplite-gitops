@@ -68,7 +68,8 @@ It installs Traefik (prod on NodePort 30080, dev on 30081, reporting the ALB as 
 address so Argo CD can mark it Healthy), metrics-server for the worker's autoscaler and Argo CD,
 then applies `apps/root.yaml`. It also creates the secrets that never enter Git: a random database
 password per environment, the Grafana admin login and the Slack webhook. A secret that already
-exists is kept, so running it again is safe.
+exists is kept, so running it again is safe. On EKS, where the EBS driver runs but no disk class is
+the default, it first adds the default `gp3` class from `bootstrap/gp3-storageclass.yaml`.
 
 Argo CD reads both repositories with read-only deploy keys; CI writes the image tag here
 with its own write key.
