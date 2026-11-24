@@ -1,0 +1,17 @@
+# EKS only: the default disk class for PostgreSQL and the monitoring stack, on encrypted gp3 EBS
+# volumes. k3s brings its own local-path default instead. A volume is created in the zone of the
+# node that first uses it, and is tagged so the teardown can find what Kubernetes created.
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gp3
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: ebs.csi.aws.com
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+parameters:
+  type: gp3
+  encrypted: "true"
+  tagSpecification_1: "project=shoplite"

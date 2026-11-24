@@ -2,14 +2,14 @@
 # Installs what Argo CD cannot manage for itself, creates the secrets that never enter Git,
 # then hands everything else to Argo CD through apps/root.yaml. Safe to run again.
 #
-#   KUBECONFIG          the k3s cluster (ansible fetches ~/.kube/shoplite.yaml)
+#   KUBECONFIG          the cluster: k3s (ansible fetches ~/.kube/shoplite.yaml) or EKS (aws eks update-kubeconfig)
 #   KEYS_DIR            folder with argocd-shoplite-app and argocd-shoplite-gitops, the read-only deploy keys
 #   SLACK_WEBHOOK_FILE  file holding the Slack incoming-webhook url for alerts
 #   ALB_HOSTNAME        the ALB's dns name, which Traefik reports as every Ingress's address
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
-: "${KUBECONFIG:?point KUBECONFIG at the k3s cluster}"
+: "${KUBECONFIG:?point KUBECONFIG at the cluster}"
 : "${KEYS_DIR:?set KEYS_DIR to the folder holding the read-only deploy keys}"
 : "${SLACK_WEBHOOK_FILE:?set SLACK_WEBHOOK_FILE to the file holding the Slack webhook url}"
 : "${ALB_HOSTNAME:?set ALB_HOSTNAME to the ALB dns name, from terraform output url}"
@@ -29,6 +29,12 @@ helm upgrade --install metrics-server metrics-server/metrics-server --version "$
   --namespace kube-system --values bootstrap/metrics-server.yaml --wait
 
 apply() { kubectl apply -f - > /dev/null; }
+
+# EKS runs the EBS CSI driver but has no default disk class; k3s has local-path and no EBS driver.
+if kubectl get csidriver ebs.csi.aws.com > /dev/null 2>&1; then
+  kubectl apply -f bootstrap/gp3-storageclass.yaml > /dev/null
+fi
+
 for namespace in shoplite shoplite-dev monitoring; do
   kubectl create namespace "$namespace" --dry-run=client -o yaml | apply
 done
