@@ -2,7 +2,7 @@
 # ci writes image after each release on shoplite-app main; until the first one, the pods wait for it.
 image:
   registry: '841162696561.dkr.ecr.ap-southeast-1.amazonaws.com'
-  tag: "bc255ef"
+  tag: "f45bfa6"
 # dev answers on the alb's port 8080, through traefik's dev entrypoint.
 ingress:
   entryPoint: dev
